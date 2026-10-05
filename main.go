@@ -11,6 +11,24 @@ type Driver struct {
 	Points int
 }
 
+func findLeader(drivers []Driver) Driver {
+	leader := drivers[0]
+	for _, driver := range drivers {
+		if driver.Points > leader.Points {
+			leader = driver
+		}
+	}
+	return leader
+}
+func findTeamDrivers(drivers []Driver, team string) []Driver {
+	result := []Driver{}
+	for _, driver := range drivers {
+    if driver.Team == team {
+		result = append(result, driver)
+
+}
+}
+
 func main() {
 	fmt.Println("F1 Analyzer is starting...")
 	lando := Driver{
@@ -40,13 +58,11 @@ func main() {
 		Number: 81,
 		Points: 128,
 	}
-
 	drivers := []Driver{lando, max, charles, oscar}
-	for _, driver := range drivers {
-		fmt.Printf("Driver: %s | Team: %s | Points: %d\n",
-			driver.Name,
-			driver.Team,
-			driver.Points,
-		)
-	}
+	leader := findLeader(drivers)
+	fmt.Printf("Driver: %s | Team: %s | Points: %d\n",
+		leader.Name,
+		leader.Team,
+		leader.Points,
+	)
 }
