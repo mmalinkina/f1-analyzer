@@ -23,12 +23,12 @@ func findLeader(drivers []Driver) Driver {
 func findTeamDrivers(drivers []Driver, team string) []Driver {
 	result := []Driver{}
 	for _, driver := range drivers {
-    if driver.Team == team {
-		result = append(result, driver)
-
+		if driver.Team == team {
+			result = append(result, driver)
+		}
+	}
+	return result
 }
-}
-
 func main() {
 	fmt.Println("F1 Analyzer is starting...")
 	lando := Driver{
@@ -60,6 +60,15 @@ func main() {
 	}
 	drivers := []Driver{lando, max, charles, oscar}
 	leader := findLeader(drivers)
+	teamMcLaren := findTeamDrivers(drivers, "McLaren")
+	fmt.Println("McLaren drivers:")
+	for _, driver := range teamMcLaren {
+		fmt.Printf("Driver: %s | Points: %d\n",
+			driver.Name,
+			driver.Points,
+		)
+	}
+	fmt.Println("Championship leader:")
 	fmt.Printf("Driver: %s | Team: %s | Points: %d\n",
 		leader.Name,
 		leader.Team,
