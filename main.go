@@ -39,6 +39,7 @@ func findDriverByName(drivers []Driver, name string) (Driver, error) {
 	}
 	return Driver{}, errors.New("driver not found")
 }
+
 func findDriverByNumber(drivers []Driver, number int) (Driver, error) {
 	for _, driver := range drivers {
 		if driver.Number == number {
@@ -47,7 +48,14 @@ func findDriverByNumber(drivers []Driver, number int) (Driver, error) {
 	}
 	return Driver{}, errors.New("driver not found")
 }
-
+func printDriver(driver Driver) {
+	fmt.Printf("Driver: %s | Number: %d | Team: %s | Points: %d\n",
+		driver.Name,
+		driver.Number,
+		driver.Team,
+		driver.Points,
+	)
+}
 func main() {
 	fmt.Println("F1 Analyzer is starting...")
 	lando := Driver{
@@ -85,22 +93,16 @@ func main() {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("Found driver: %s | Team: %s | Points: %d\n",
-		driver.Name,
-		driver.Team,
-		driver.Points,
-	)
-	driver, err = findDriverByNumber(drivers, 1)
+	printDriver(driver)
+	fmt.Print("Enter driver number: ")
+	var number int
+	fmt.Scan(&number)
+	driver, err = findDriverByNumber(drivers, number)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Printf("Found driver: %d | Name: %s | Team: %s | Points: %d\n",
-		driver.Number,
-		driver.Name,
-		driver.Team,
-		driver.Points,
-	)
+	printDriver(driver)
 	fmt.Println("McLaren drivers:")
 	for _, driver := range teamMcLaren {
 		fmt.Printf("Driver: %s | Points: %d\n",
