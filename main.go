@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"sort"
 )
 
 type Driver struct {
@@ -56,6 +57,15 @@ func printDriver(driver Driver) {
 		driver.Points,
 	)
 }
+
+func printStandings(drivers []Driver) {
+	for i, driver := range drivers {
+		fmt.Printf("%d. %s --- %d\n",
+			i+1,
+			driver.Name,
+			driver.Points)
+	}
+}
 func main() {
 	fmt.Println("F1 Analyzer is starting...")
 	lando := Driver{
@@ -86,6 +96,12 @@ func main() {
 		Points: 128,
 	}
 	drivers := []Driver{lando, max, charles, oscar}
+	sort.Slice(drivers, func(i, j int) bool {
+		return drivers[i].Points > drivers[j].Points
+	})
+
+	printStandings(drivers)
+
 	leader := findLeader(drivers)
 	teamMcLaren := findTeamDrivers(drivers, "McLaren")
 	driver, err := findDriverByName(drivers, "Lando Norris")
@@ -94,15 +110,25 @@ func main() {
 		return
 	}
 	printDriver(driver)
-	fmt.Print("Enter driver number: ")
-	var number int
-	fmt.Scan(&number)
-	driver, err = findDriverByNumber(drivers, number)
-	if err != nil {
-		fmt.Println(err)
-		return
+	for {
+
+		fmt.Print("Enter driver number: ")
+		var number int
+		_, err := fmt.Scan(&number)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		driver, err = findDriverByNumber(drivers, number)
+
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		printDriver(driver)
+		break
 	}
-	printDriver(driver)
 	fmt.Println("McLaren drivers:")
 	for _, driver := range teamMcLaren {
 		fmt.Printf("Driver: %s | Points: %d\n",
