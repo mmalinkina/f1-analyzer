@@ -11,12 +11,13 @@ type Driver struct {
 	Team   string
 	Number int
 	Points int
+	Wins   int
 }
 
 func findLeader(drivers []Driver) Driver {
 	leader := drivers[0]
 	for _, driver := range drivers {
-		if driver.Points > leader.Points {
+		if isBetterDriver(driver, leader) {
 			leader = driver
 		}
 	}
@@ -66,41 +67,52 @@ func printStandings(drivers []Driver) {
 			driver.Points)
 	}
 }
+func sortDriversByChampionship(drivers []Driver) {
+	sort.Slice(drivers, func(i, j int) bool {
+		return isBetterDriver(drivers[i], drivers[j])
+	})
+}
+func isBetterDriver(a Driver, b Driver) bool {
+	if a.Points != b.Points {
+		return a.Points > b.Points
+	}
+	return a.Wins > b.Wins
+}
+
 func main() {
 	fmt.Println("F1 Analyzer is starting...")
-	lando := Driver{
-		Name:   "Lando Norris",
-		Team:   "McLaren",
-		Number: 1,
-		Points: 188,
+	drivers := []Driver{
+		{Name: "Lando Norris",
+			Team:   "McLaren",
+			Number: 1,
+			Points: 188,
+			Wins:   3,
+		},
+		{Name: "Max Verstappen",
+			Team:   "Red Bull",
+			Number: 3,
+			Points: 188,
+			Wins:   5,
+		},
+		{
+			Name:   "Charles Leclerc",
+			Team:   "Ferrari",
+			Number: 16,
+			Points: 191,
+			Wins:   2,
+		},
+		{
+			Name:   "Oscar Piastri",
+			Team:   "McLaren",
+			Number: 81,
+			Points: 128,
+			Wins:   4,
+		},
 	}
 
-	max := Driver{
-		Name:   "Max Verstappen",
-		Team:   "Red Bull",
-		Number: 3,
-		Points: 188,
-	}
-
-	charles := Driver{
-		Name:   "Charles Leclerc",
-		Team:   "Ferrari",
-		Number: 16,
-		Points: 191,
-	}
-
-	oscar := Driver{
-		Name:   "Oscar Piastri",
-		Team:   "McLaren",
-		Number: 81,
-		Points: 128,
-	}
-	drivers := []Driver{lando, max, charles, oscar}
-	sort.Slice(drivers, func(i, j int) bool {
-		return drivers[i].Points > drivers[j].Points
-	})
-
+	sortDriversByChampionship(drivers)
 	printStandings(drivers)
+	isBetterDriver(drivers[0], drivers[1])
 
 	leader := findLeader(drivers)
 	teamMcLaren := findTeamDrivers(drivers, "McLaren")
