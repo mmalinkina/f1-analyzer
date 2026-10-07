@@ -14,14 +14,17 @@ type Driver struct {
 	Wins   int
 }
 
-func findLeader(drivers []Driver) Driver {
+func findLeader(drivers []Driver) (Driver, error) {
+	if len(drivers) == 0 {
+		return Driver{}, errors.New("no drivers available")
+	}
 	leader := drivers[0]
 	for _, driver := range drivers {
 		if isBetterDriver(driver, leader) {
 			leader = driver
 		}
 	}
-	return leader
+	return leader, nil
 }
 func findTeamDrivers(drivers []Driver, team string) []Driver {
 	result := []Driver{}
@@ -42,11 +45,10 @@ func findDriverByName(drivers []Driver, name string) (Driver, error) {
 	return Driver{}, errors.New("driver not found")
 }
 
-func findDriverByNumber(drivers []Driver, number int) (Driver, error) {
-	for _, driver := range drivers {
-		if driver.Number == number {
-			return driver, nil
-		}
+func findDriverByNumber(driversByNumber map[int]Driver, number int) (Driver, error) {
+	driver, ok := driversByNumber[number]
+	if ok {
+		return driver, nil
 	}
 	return Driver{}, errors.New("driver not found")
 }
@@ -109,12 +111,19 @@ func main() {
 			Wins:   4,
 		},
 	}
+	driversByNumber := make(map[int]Driver)
 
+	for _, driver := range drivers {
+		driversByNumber[driver.Number] = driver
+	}
 	sortDriversByChampionship(drivers)
 	printStandings(drivers)
-	isBetterDriver(drivers[0], drivers[1])
 
-	leader := findLeader(drivers)
+	leader, err := findLeader(drivers)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 	teamMcLaren := findTeamDrivers(drivers, "McLaren")
 	driver, err := findDriverByName(drivers, "Lando Norris")
 	if err != nil {
@@ -132,7 +141,7 @@ func main() {
 			continue
 		}
 
-		driver, err = findDriverByNumber(drivers, number)
+		driver, err = findDriverByNumber(driversByNumber, number)
 
 		if err != nil {
 			fmt.Println(err)
